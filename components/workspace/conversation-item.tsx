@@ -36,7 +36,10 @@ export function ConversationItem({
       />
       <div className="flex-1 min-w-0">
         <div className="truncate font-medium leading-snug">{conversation.title}</div>
-        <div className="text-[10px] font-mono text-text-muted mt-0.5 truncate">
+        <div
+          className="text-[10px] font-mono text-text-muted mt-0.5 truncate"
+          suppressHydrationWarning
+        >
           {formatRelativeDate(conversation.updatedAt)}
         </div>
       </div>
