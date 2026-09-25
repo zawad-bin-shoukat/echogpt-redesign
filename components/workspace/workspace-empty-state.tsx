@@ -18,25 +18,29 @@ const QUICK_SUGGESTIONS = [
     icon: FileText,
     title: "Summarize a long article",
     description: "Extract structured key takeaways, core findings, and executive decisions.",
-    prompt: "Please provide a concise, structured summary of the following document including key findings and takeaways:\n\n",
+    prompt:
+      "Please provide a concise, structured summary of the key architectural trade-offs in modern multi-model AI gateways, highlighting cost, latency, and reliability.",
   },
   {
     icon: Lightbulb,
     title: "Explain a difficult concept",
     description: "Break down complex technical systems, physics, or algorithmic trade-offs.",
-    prompt: "Can you explain the following concept with an intuitive real-world analogy and step-by-step breakdown:\n\n",
+    prompt:
+      "Can you explain how speculative decoding works in large language models with an intuitive analogy and step-by-step breakdown?",
   },
   {
     icon: Scale,
     title: "Compare two ideas",
     description: "Evaluate pros, cons, and performance implications across architectural options.",
-    prompt: "Compare the tradeoffs, performance implications, and practical limits between:\n\n1. Option A: \n2. Option B: ",
+    prompt:
+      "Compare the architectural tradeoffs between dense and Mixture-of-Experts (MoE) transformer architectures for high-throughput code synthesis.",
   },
   {
     icon: Code2,
     title: "Write or improve code",
     description: "Synthesize type-safe functions, refactor hooks, or debug subtle errors.",
-    prompt: "Help me review and optimize this code snippet for performance and type safety:\n\n```\n\n```",
+    prompt:
+      "Help me review and optimize this React state management pattern to prevent unnecessary re-renders in a streaming chat component.",
   },
 ];
 
@@ -76,7 +80,7 @@ export function WorkspaceEmptyState({
               key={idx}
               type="button"
               onClick={() => onSelectPrompt(item.prompt)}
-              className="p-3.5 rounded-[var(--radius-lg)] border border-border-subtle bg-surface-elevated hover:bg-surface-hover/70 hover:border-border-strong text-left transition-all shadow-2xs group focus-visible:outline-2 focus-visible:outline-accent"
+              className="p-3.5 rounded-[var(--radius-lg)] border border-border-subtle bg-surface-elevated hover:bg-surface-hover/70 hover:border-border-strong text-left transition-all shadow-2xs group focus-visible:outline-2 focus-visible:outline-accent cursor-pointer"
             >
               <div className="flex items-center gap-2.5">
                 <div className="size-7 rounded-[var(--radius-md)] bg-accent-subtle text-accent flex items-center justify-center shrink-0">

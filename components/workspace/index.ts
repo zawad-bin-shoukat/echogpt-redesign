@@ -3,4 +3,5 @@ export * from "./workspace-sidebar";
 export * from "./workspace-header";
 export * from "./workspace-empty-state";
 export * from "./workspace-composer";
+export * from "./workspace-messages";
 export * from "./conversation-item";

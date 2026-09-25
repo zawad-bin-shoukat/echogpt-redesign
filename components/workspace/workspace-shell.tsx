@@ -4,25 +4,41 @@ import * as React from "react";
 import { WorkspaceSidebar } from "./workspace-sidebar";
 import { WorkspaceHeader } from "./workspace-header";
 import { WorkspaceEmptyState } from "./workspace-empty-state";
+import { WorkspaceMessages } from "./workspace-messages";
 import { WorkspaceComposer } from "./workspace-composer";
 import { SAMPLE_CONVERSATIONS } from "@/lib/mock/sample-conversations";
 import { VERIFIED_MODELS } from "@/lib/mock/verified-models";
-import type { Conversation, Model } from "@/types";
-import { Badge } from "@/components/ui/badge";
+import { generateSimulatedResponse } from "@/lib/mock/simulation-responses";
+import type { Conversation, Message, Model } from "@/types";
 
 export function WorkspaceShell() {
-  const [conversations] = React.useState<Conversation[]>(SAMPLE_CONVERSATIONS);
-  const [activeConversationId, setActiveConversationId] = React.useState<string | null>(null);
+  const [conversations, setConversations] =
+    React.useState<Conversation[]>(SAMPLE_CONVERSATIONS);
+  const [activeConversationId, setActiveConversationId] = React.useState<
+    string | null
+  >(null);
 
   const [activeModel, setActiveModel] = React.useState<Model>(() => {
     return (
       VERIFIED_MODELS.find((m) => m.slug === "gpt-5.6-sol") ||
-      VERIFIED_MODELS[0]
+      VERIFIED_MODELS[0]!
     );
   });
 
   const [composerValue, setComposerValue] = React.useState("");
+  const [isThinking, setIsThinking] = React.useState(false);
   const [isOpenMobile, setIsOpenMobile] = React.useState(false);
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const timerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  // Clean up any pending thinking timers on unmount
+  React.useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
 
   // Active conversation object
   const activeConversation = React.useMemo(() => {
@@ -30,27 +46,128 @@ export function WorkspaceShell() {
     return conversations.find((c) => c.id === activeConversationId) || null;
   }, [activeConversationId, conversations]);
 
-  // Handle conversation selection
+  // Handle conversation selection from sidebar
   const handleSelectConversation = (id: string) => {
     setActiveConversationId(id);
     const selected = conversations.find((c) => c.id === id);
     if (selected?.modelSlug) {
-      const matchedModel = VERIFIED_MODELS.find((m) => m.slug === selected.modelSlug);
+      const matchedModel = VERIFIED_MODELS.find(
+        (m) => m.slug === selected.modelSlug
+      );
       if (matchedModel) {
         setActiveModel(matchedModel);
       }
     }
   };
 
+  // Handle "New Chat" action
   const handleNewChat = () => {
     setActiveConversationId(null);
     setComposerValue("");
+    setIsThinking(false);
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 50);
   };
 
-  const handleSubmit = () => {
-    // In Phase 5A this is local prototype state
-    if (!composerValue.trim()) return;
+  // Handle model change from header selector
+  const handleSelectModel = (newModel: Model) => {
+    setActiveModel(newModel);
+    if (activeConversationId) {
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.id === activeConversationId ? { ...c, modelSlug: newModel.slug } : c
+        )
+      );
+    }
+  };
+
+  // Primary message submission pipeline
+  const handleSendPrompt = (promptText: string) => {
+    const text = promptText.trim();
+    if (!text || isThinking) return;
+
+    // Clear composer input immediately
     setComposerValue("");
+
+    const now = new Date().toISOString();
+    const userMessage: Message = {
+      id: `msg-${Date.now()}-u`,
+      role: "user",
+      content: text,
+      createdAt: now,
+      status: "complete",
+    };
+
+    let targetConvId = activeConversationId;
+
+    if (!targetConvId) {
+      // Create new conversation
+      const newId = `conv-${Date.now()}`;
+      const title =
+        text.length > 36 ? `${text.slice(0, 36).trim()}…` : text;
+
+      const newConversation: Conversation = {
+        id: newId,
+        title,
+        modelSlug: activeModel.slug,
+        createdAt: now,
+        updatedAt: now,
+        messages: [userMessage],
+      };
+
+      setConversations((prev) => [newConversation, ...prev]);
+      setActiveConversationId(newId);
+      targetConvId = newId;
+    } else {
+      // Append user message to existing active conversation
+      setConversations((prev) =>
+        prev.map((c) => {
+          if (c.id === targetConvId) {
+            return {
+              ...c,
+              updatedAt: now,
+              messages: [...c.messages, userMessage],
+            };
+          }
+          return c;
+        })
+      );
+    }
+
+    // Trigger local simulated assistant response
+    setIsThinking(true);
+    const thinkingModel = activeModel;
+
+    timerRef.current = setTimeout(() => {
+      const responseData = generateSimulatedResponse(text, thinkingModel);
+      const assistantMessage: Message = {
+        id: `msg-${Date.now()}-a`,
+        role: "assistant",
+        content: responseData.content,
+        modelSlug: thinkingModel.slug,
+        createdAt: new Date().toISOString(),
+        status: "complete",
+      };
+
+      setConversations((prev) =>
+        prev.map((c) => {
+          if (c.id === targetConvId) {
+            return {
+              ...c,
+              updatedAt: new Date().toISOString(),
+              messages: [...c.messages, assistantMessage],
+            };
+          }
+          return c;
+        })
+      );
+
+      setIsThinking(false);
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 50);
+    }, 600);
   };
 
   return (
@@ -69,73 +186,40 @@ export function WorkspaceShell() {
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-background">
         {/* Workspace Top Header */}
         <WorkspaceHeader
-          currentTitle={activeConversation ? activeConversation.title : "New Conversation"}
+          currentTitle={
+            activeConversation ? activeConversation.title : "New Conversation"
+          }
           activeModel={activeModel}
-          onSelectModel={setActiveModel}
+          onSelectModel={handleSelectModel}
           onOpenMobileSidebar={() => setIsOpenMobile(true)}
         />
 
-        {/* Workspace Center Content (Empty state or Conversation view) */}
-        <main className="flex-1 overflow-y-auto flex flex-col justify-between">
-          {!activeConversation ? (
+        {/* Workspace Center Content (Empty state OR Conversation transcript) */}
+        <main
+          id="workspace-main"
+          className="flex-1 overflow-y-auto flex flex-col justify-between"
+        >
+          {!activeConversation || activeConversation.messages.length === 0 ? (
             <WorkspaceEmptyState
               activeModel={activeModel}
-              onSelectPrompt={(prompt) => setComposerValue(prompt)}
+              onSelectPrompt={handleSendPrompt}
             />
           ) : (
-            <div className="max-w-3xl mx-auto w-full p-4 sm:p-6 space-y-6 animate-in fade-in duration-150">
-              {activeConversation.messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex items-start gap-3 ${
-                    msg.role === "user" ? "ml-auto max-w-xl justify-end" : "max-w-2xl"
-                  }`}
-                >
-                  {msg.role !== "user" && (
-                    <div className="size-7 rounded-full bg-accent/15 border border-accent/30 text-accent flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                      E
-                    </div>
-                  )}
-
-                  <div className="space-y-1.5 flex-1 min-w-0">
-                    {msg.role !== "user" && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-text-primary">
-                          {activeModel.name}
-                        </span>
-                        <Badge variant={activeModel.category} size="sm" className="capitalize">
-                          {activeModel.category}
-                        </Badge>
-                      </div>
-                    )}
-
-                    <div
-                      className={`rounded-[var(--radius-lg)] p-4 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap ${
-                        msg.role === "user"
-                          ? "bg-surface border border-border-subtle text-text-primary rounded-tr-xs"
-                          : "bg-surface/60 border border-border-subtle text-text-secondary rounded-tl-xs"
-                      }`}
-                    >
-                      {msg.content}
-                    </div>
-                  </div>
-
-                  {msg.role === "user" && (
-                    <div className="size-7 rounded-full bg-border-strong text-text-secondary flex items-center justify-center text-xs font-semibold shrink-0 mt-0.5">
-                      U
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+            <WorkspaceMessages
+              messages={activeConversation.messages}
+              activeModel={activeModel}
+              isThinking={isThinking}
+            />
           )}
 
           {/* Workspace Bottom Composer */}
           <WorkspaceComposer
             value={composerValue}
             onChange={setComposerValue}
-            onSubmit={handleSubmit}
+            onSubmit={() => handleSendPrompt(composerValue)}
             activeModel={activeModel}
+            isThinking={isThinking}
+            textareaRef={textareaRef}
           />
         </main>
       </div>
