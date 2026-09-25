@@ -1,26 +1,232 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   ECHOGPT DESIGN SYSTEM — GLOBAL CSS TOKENS
+   Tailwind CSS v4 (@theme inline) with semantic CSS custom properties.
+   Design System v1.0 — see docs/DESIGN_SYSTEM.md for full specification.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. SEMANTIC DESIGN TOKENS (CSS Custom Properties)
+   -------------------------------------------------------------------------- */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light Mode — default */
+
+  /* Backgrounds */
+  --background:       #ffffff;
+  --surface:          #f4f4f5;
+  --surface-elevated: #ffffff;
+  --surface-hover:    #e4e4e7;
+
+  /* Borders */
+  --border-subtle: #e4e4e7;
+  --border-strong: #d4d4d8;
+
+  /* Typography */
+  --text-primary:   #09090b;
+  --text-secondary: #52525b;
+  --text-muted:     #71717a;
+
+  /* Accent (invariant across modes) */
+  --accent-primary: #10b981;
+  --accent-hover:   #059669;
+  --accent-subtle:  rgba(16, 185, 129, 0.1);
+
+  /* Semantic Status */
+  --status-success: #10b981;
+  --status-warning: #f59e0b;
+  --status-error:   #ef4444;
+
+  /* Radius Scale */
+  --radius-sm:   6px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  24px;
+  --radius-full: 9999px;
 }
+
+.dark {
+  /* Dark Mode */
+
+  /* Backgrounds */
+  --background:       #09090b;
+  --surface:          #121215;
+  --surface-elevated: #18181b;
+  --surface-hover:    #27272a;
+
+  /* Borders */
+  --border-subtle: #27272a;
+  --border-strong: #3f3f46;
+
+  /* Typography */
+  --text-primary:   #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted:     #71717a;
+
+  /* Accent */
+  --accent-primary: #10b981;
+  --accent-hover:   #34d399;
+  --accent-subtle:  rgba(16, 185, 129, 0.15);
+
+  /* Semantic Status */
+  --status-success: #10b981;
+  --status-warning: #fbbf24;
+  --status-error:   #f87171;
+}
+
+/* --------------------------------------------------------------------------
+   2. TAILWIND v4 THEME MAPPING
+   Maps CSS custom properties to Tailwind utility classes.
+   -------------------------------------------------------------------------- */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Font families — use the Geist variables from layout.tsx */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Semantic color utilities */
+  --color-background:       var(--background);
+  --color-surface:          var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-hover:    var(--surface-hover);
+
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+
+  --color-text-primary:   var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted:     var(--text-muted);
+
+  --color-accent:        var(--accent-primary);
+  --color-accent-hover:  var(--accent-hover);
+  --color-accent-subtle: var(--accent-subtle);
+
+  --color-success: var(--status-success);
+  --color-warning: var(--status-warning);
+  --color-error:   var(--status-error);
+
+  /* Radius tokens */
+  --radius-sm:   var(--radius-sm);
+  --radius-md:   var(--radius-md);
+  --radius-lg:   var(--radius-lg);
+  --radius-xl:   var(--radius-xl);
+  --radius-full: var(--radius-full);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* --------------------------------------------------------------------------
+   3. BASE RESETS & GLOBAL STYLES
+   -------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+  min-height: 100%;
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   4. FOCUS VISIBILITY
+   Enforces accessible keyboard focus rings using the accent color.
+   -------------------------------------------------------------------------- */
+
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* --------------------------------------------------------------------------
+   5. SCROLLBAR STYLING
+   Slim, subtle scrollbars that integrate with the design system.
+   -------------------------------------------------------------------------- */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   6. TYPOGRAPHY UTILITIES
+   Tailwind v4 arbitrary property shorthands for the type scale.
+   -------------------------------------------------------------------------- */
+
+.text-display {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.text-h1 {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.text-h2 {
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.text-h3 {
+  font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+  line-height: 1.35;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+/* --------------------------------------------------------------------------
+   7. SELECTION COLORS
+   -------------------------------------------------------------------------- */
+
+::selection {
+  background: var(--accent-subtle);
+  color: var(--text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   8. REDUCED MOTION
+   Disables all non-essential transitions for accessibility.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
