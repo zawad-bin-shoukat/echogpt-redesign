@@ -14,11 +14,51 @@ import {
 } from "lucide-react";
 import { SidePanel } from "./side-panel";
 import { Badge } from "@/components/ui/badge";
+import { VERIFIED_MODELS } from "@/lib/mock/verified-models";
+import type { Model } from "@/types";
 import { cn } from "@/lib/utils";
+import {
+  INITIAL_EXTENSION_MESSAGES,
+  type ExtensionMessage,
+} from "./extension-simulation";
 
 export function BrowserSimulator() {
   const [activeView, setActiveView] = React.useState<"split" | "page" | "panel">("split");
   const [selectedHighlight, setSelectedHighlight] = React.useState(true);
+  const [pageContextActive, setPageContextActive] = React.useState(true);
+
+  // Default active model: GPT-5.6 Sol
+  const defaultModel =
+    VERIFIED_MODELS.find((m) => m.id === "gpt-5-6-sol") || VERIFIED_MODELS[0];
+  const [activeModel, setActiveModel] = React.useState<Model>(defaultModel);
+
+  // Lifted conversation state across views to prevent state loss on tab switches
+  const [messages, setMessages] = React.useState<ExtensionMessage[]>(
+    INITIAL_EXTENSION_MESSAGES
+  );
+  const [status, setStatus] = React.useState<"idle" | "processing">("idle");
+  const [externalActionTrigger, setExternalActionTrigger] = React.useState<{
+    action: "summarize" | "explain" | "takeaways";
+    timestamp: number;
+  } | null>(null);
+
+  // Trigger explain action from article highlight
+  const handleHighlightClick = () => {
+    setSelectedHighlight(true);
+    setExternalActionTrigger({
+      action: "explain",
+      timestamp: Date.now(),
+    });
+    // On mobile or if in page view, switch to panel/split view to show side panel
+    if (activeView === "page") {
+      // Check window width
+      if (typeof window !== "undefined" && window.innerWidth < 1024) {
+        setActiveView("panel");
+      } else {
+        setActiveView("split");
+      }
+    }
+  };
 
   // Reusable article component to avoid duplicating text across views
   const renderArticle = (maxWidthClass = "max-w-2xl xl:max-w-3xl") => (
@@ -52,20 +92,29 @@ export function BrowserSimulator() {
 
       {/* Highlighted / Selected Text Passage (Triggering EchoGPT Explanation) */}
       <div
-        onClick={() => {
-          setSelectedHighlight(!selectedHighlight);
-          if (activeView !== "split") {
-            setActiveView("panel");
+        role="button"
+        tabIndex={0}
+        onClick={handleHighlightClick}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleHighlightClick();
           }
         }}
-        className="relative my-4 p-3.5 rounded-[var(--radius-lg)] bg-accent-subtle/40 border border-accent/40 text-text-primary transition-all cursor-pointer group shadow-xs"
+        aria-label="Highlighted excerpt: Sparse MoE architectures decouple total parameter capacity from per-token computation FLOPs. Click to inspect with EchoGPT."
+        className={cn(
+          "relative my-4 p-3.5 rounded-[var(--radius-lg)] border text-text-primary transition-all cursor-pointer group shadow-xs focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent",
+          selectedHighlight
+            ? "bg-accent-subtle/50 border-accent/60"
+            : "bg-surface border-border-subtle hover:border-accent/40"
+        )}
       >
         <div className="flex items-center justify-between text-[11px] font-mono text-accent font-medium mb-1">
           <span className="inline-flex items-center gap-1">
             <Sparkles className="size-3" />
             <span>HIGHLIGHTED TEXT SELECTION</span>
           </span>
-          <span className="text-[10px] text-text-muted">
+          <span className="text-[10px] text-text-muted group-hover:text-text-primary transition-colors">
             Click to inspect in Side Panel
           </span>
         </div>
@@ -93,7 +142,7 @@ export function BrowserSimulator() {
       {/* Technical Code / Architecture Illustration */}
       <div className="p-3 rounded-[var(--radius-lg)] bg-surface border border-border-subtle font-mono text-[11px] text-text-primary space-y-1">
         <div className="text-[10px] text-text-muted uppercase tracking-wider font-semibold">
-          {"// MoE Dynamic Router Routing Matrix"}
+          {"// MOE DYNAMIC ROUTER ROUTING MATRIX"}
         </div>
         <div className="text-emerald-500 dark:text-emerald-400">
           const routerWeights = softmax(tokenEmbedding · gateMatrix);
@@ -177,7 +226,11 @@ export function BrowserSimulator() {
             <button
               type="button"
               aria-label="Reload webpage"
-              onClick={() => {}}
+              onClick={() => {
+                setMessages(INITIAL_EXTENSION_MESSAGES);
+                setStatus("idle");
+              }}
+              title="Reload webpage simulation"
               className="p-1 rounded hover:bg-surface text-text-muted hover:text-text-primary cursor-pointer transition-colors"
             >
               <RotateCw className="size-3.5" />
@@ -202,13 +255,18 @@ export function BrowserSimulator() {
             </button>
 
             {/* EchoGPT Active Side Panel Icon Button */}
-            <div
-              className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent-subtle border border-accent/30 text-accent text-[11px] font-medium"
+            <button
+              type="button"
+              onClick={() => {
+                setActiveView(activeView === "panel" ? "split" : "panel");
+              }}
+              aria-label="Toggle EchoGPT Side Panel view"
+              className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent-subtle border border-accent/30 text-accent text-[11px] font-medium cursor-pointer hover:bg-accent-subtle/80 transition-colors"
               title="EchoGPT Side Panel active on this tab"
             >
               <span className="size-1.5 rounded-full bg-accent animate-pulse" />
               <span className="font-semibold text-[10px]">EchoGPT</span>
-            </div>
+            </button>
           </div>
         </div>
 
@@ -237,7 +295,7 @@ export function BrowserSimulator() {
               onClick={() => setActiveView("page")}
               className={cn(
                 "flex-1 sm:flex-initial py-1.5 px-3 rounded-[var(--radius-md)] text-xs font-medium text-center transition-all flex items-center justify-center gap-1.5 cursor-pointer",
-                activeView === "page" || (activeView === "split" && false)
+                activeView === "page"
                   ? "bg-surface-elevated text-text-primary border border-border-subtle shadow-xs font-semibold"
                   : "text-text-muted hover:text-text-primary"
               )}
@@ -286,8 +344,16 @@ export function BrowserSimulator() {
             <div className="hidden lg:block w-[380px] xl:w-[400px] shrink-0 border-l border-border-subtle h-full">
               <SidePanel
                 className="h-full min-h-[500px] lg:min-h-full"
-                onSummarizeClick={() => {}}
-                onExplainClick={() => {}}
+                pageContextActive={pageContextActive}
+                onTogglePageContext={() => setPageContextActive(!pageContextActive)}
+                selectedHighlight={selectedHighlight}
+                activeModel={activeModel}
+                onSelectModel={setActiveModel}
+                messages={messages}
+                onMessagesChange={setMessages}
+                status={status}
+                onStatusChange={setStatus}
+                externalActionTrigger={externalActionTrigger}
               />
             </div>
           </div>
@@ -306,8 +372,16 @@ export function BrowserSimulator() {
             <div className="w-full max-w-xl h-full min-h-[520px] rounded-[var(--radius-lg)] border border-border-subtle shadow-md overflow-hidden bg-surface">
               <SidePanel
                 className="h-full w-full"
-                onSummarizeClick={() => {}}
-                onExplainClick={() => {}}
+                pageContextActive={pageContextActive}
+                onTogglePageContext={() => setPageContextActive(!pageContextActive)}
+                selectedHighlight={selectedHighlight}
+                activeModel={activeModel}
+                onSelectModel={setActiveModel}
+                messages={messages}
+                onMessagesChange={setMessages}
+                status={status}
+                onStatusChange={setStatus}
+                externalActionTrigger={externalActionTrigger}
               />
             </div>
           </div>

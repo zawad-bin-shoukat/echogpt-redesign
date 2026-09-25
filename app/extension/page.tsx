@@ -17,8 +17,8 @@ export const metadata: Metadata = {
 export default function ExtensionPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-text-primary selection:bg-accent-subtle selection:text-accent scroll-smooth">
-      {/* 1. Global Navigation */}
-      <Navbar />
+      {/* 1. Global Navigation (relative on mobile to isolate extension simulator, sticky on desktop) */}
+      <Navbar className="relative lg:sticky" />
 
       {/* 2. Main Content Stream */}
       <main className="flex-1">
