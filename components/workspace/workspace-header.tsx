@@ -163,7 +163,7 @@ export function WorkspaceHeader({
                   <input
                     ref={searchInputRef}
                     type="text"
-                    placeholder="Search 40+ models..."
+                    placeholder="Search 41 models..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-8 pr-3 py-1.5 text-xs bg-surface border border-border-subtle rounded-[var(--radius-md)] text-text-primary placeholder:text-text-muted focus:outline-hidden focus:border-accent"

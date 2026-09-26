@@ -70,7 +70,7 @@ export function Navbar({ className }: { className?: string } = {}) {
           <BrandLogo showBadge />
 
           {/* Desktop Ecosystem switcher links */}
-          <nav className="hidden lg:flex items-center gap-1 pl-4 border-l border-border-subtle" aria-label="Ecosystem products">
+          <nav className="hidden xl:flex items-center gap-1 pl-4 border-l border-border-subtle" aria-label="Ecosystem products">
             <Link
               href="/"
               className={cn(

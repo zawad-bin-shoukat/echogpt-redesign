@@ -109,7 +109,7 @@ export function PricingSection() {
               </div>
 
               <p className="mt-2 text-xs text-text-secondary">
-                Full access to all 41+ leading AI models with flexible month-to-month billing.
+                Full access to all 41 leading AI models with flexible month-to-month billing.
               </p>
 
               <div className="mt-6 flex items-baseline gap-1">

@@ -227,7 +227,7 @@ export function BentoFeatures() {
 
             {/* Flow visualization */}
             <div className="mt-8 rounded-[var(--radius-lg)] border border-border-subtle bg-surface p-4">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <div className="size-7 rounded-full bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xs font-bold shrink-0">
                     1
@@ -238,7 +238,7 @@ export function BentoFeatures() {
                   </div>
                 </div>
 
-                <div className="hidden sm:block text-text-muted font-mono text-xs">→</div>
+                <div className="hidden lg:block text-text-muted font-mono text-xs">→</div>
 
                 <div className="flex items-center gap-3">
                   <div className="size-7 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xs font-bold shrink-0">
@@ -250,7 +250,7 @@ export function BentoFeatures() {
                   </div>
                 </div>
 
-                <div className="hidden sm:block text-text-muted font-mono text-xs">→</div>
+                <div className="hidden lg:block text-text-muted font-mono text-xs">→</div>
 
                 <div className="flex items-center gap-3">
                   <div className="size-7 rounded-full bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 text-xs font-bold shrink-0">
