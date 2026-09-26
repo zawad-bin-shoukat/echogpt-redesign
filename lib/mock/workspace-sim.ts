@@ -39,7 +39,7 @@ export const MODEL_RESPONSES: Record<string, WorkspaceResponseData> = {
       {
         title: "Sparse MoE",
         description:
-          "3-4x lower FLOPs per generated token; higher throughput for real-time IDE completion.",
+          "Reduced active FLOPs per generated token; higher throughput for real-time completion.",
       },
       {
         title: "Dense Architecture",
@@ -47,7 +47,7 @@ export const MODEL_RESPONSES: Record<string, WorkspaceResponseData> = {
           "Uniform memory bandwidth; deterministic KV-cache footprint for deep multi-step reasoning.",
       },
     ],
-    latency: "0.42s",
+    latency: "Fast stream",
     crossVerifySuggestions: ["google/gemini-3.8-flash", "deepseek/deepseek-v4-pro"],
   },
 
@@ -67,15 +67,15 @@ export const MODEL_RESPONSES: Record<string, WorkspaceResponseData> = {
       {
         title: "Flash Throughput",
         description:
-          "Up to 240 tokens/sec sustained generation across massive multimodal repositories.",
+          "High sustained throughput across large repositories.",
       },
       {
         title: "Dense Alternative",
         description:
-          "Requires 3.8x more GPU compute per token, creating latency bottlenecks under concurrent team load.",
+          "Requires more GPU compute per token compared to sparse routing.",
       },
     ],
-    latency: "0.24s",
+    latency: "Fast stream",
     crossVerifySuggestions: ["gpt-5.6-sol", "deepseek/deepseek-v4-pro"],
   },
 
@@ -95,15 +95,15 @@ export const MODEL_RESPONSES: Record<string, WorkspaceResponseData> = {
       {
         title: "MLA Compression",
         description:
-          "Compresses KV cache by 85%, allowing 16x larger concurrent context batches in IDEs.",
+          "Significantly compresses KV cache, allowing larger concurrent context batches.",
       },
       {
         title: "Load Balancing",
         description:
-          "Eliminates auxiliary loss degradation, ensuring zero performance penalty on complex algorithms.",
+          "Eliminates auxiliary loss degradation, ensuring solid performance on complex algorithms.",
       },
     ],
-    latency: "0.38s",
+    latency: "Fast stream",
     crossVerifySuggestions: ["moonshotai/Kimi-K2.7-Code", "gpt-5.6-sol"],
   },
 
@@ -123,7 +123,7 @@ export const MODEL_RESPONSES: Record<string, WorkspaceResponseData> = {
       {
         title: "AST-Guided Gating",
         description:
-          "Precision syntax verification eliminates 92% of hallucinated API symbol exports.",
+          "Precision syntax verification helps prevent hallucinated API symbol exports.",
       },
       {
         title: "Long-Context Scaling",
@@ -131,7 +131,7 @@ export const MODEL_RESPONSES: Record<string, WorkspaceResponseData> = {
           "Maintains high recall across entire monorepos without token degradation.",
       },
     ],
-    latency: "0.49s",
+    latency: "Fast stream",
     crossVerifySuggestions: ["deepseek/deepseek-v4-pro", "x-ai/grok-4.6"],
   },
 
@@ -156,10 +156,10 @@ export const MODEL_RESPONSES: Record<string, WorkspaceResponseData> = {
       {
         title: "Direct Synthesis",
         description:
-          "Zero verbose preambles; delivers immediate executable solutions with performance metrics.",
+          "Zero verbose preambles; delivers immediate executable solutions.",
       },
     ],
-    latency: "0.33s",
+    latency: "Fast stream",
     crossVerifySuggestions: ["gpt-5.6-sol", "google/gemini-3.8-flash"],
   },
 
@@ -225,7 +225,7 @@ export function getModelResponse(model: Model, userPrompt: string): WorkspaceRes
             : "Pro tier model with dedicated high-throughput compute priority.",
       },
     ],
-    latency: "0.36s",
+    latency: "Fast stream",
     crossVerifySuggestions: ["gpt-5.6-sol", "deepseek/deepseek-v4-pro"],
   };
 }

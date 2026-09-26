@@ -176,14 +176,14 @@ export function ExtensionSpotlight() {
                         </span>
                       </div>
                       <Badge variant="fast" size="sm">
-                        0.22s
+                        Fast
                       </Badge>
                     </div>
 
                     {/* Page Context Badge */}
                     <div className="flex items-center justify-between p-2 rounded-[var(--radius-sm)] bg-surface-elevated border border-border-subtle text-[11px]">
                       <span className="text-text-muted">Page Context:</span>
-                      <span className="font-mono text-accent font-medium">1,420 words active</span>
+                      <span className="font-mono text-accent font-medium">Active page context</span>
                     </div>
 
                     {/* Assistant Quick Explanation */}

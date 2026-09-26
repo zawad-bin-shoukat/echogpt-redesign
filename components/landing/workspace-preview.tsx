@@ -422,7 +422,7 @@ export function WorkspacePreview() {
                     {activeModel.category}
                   </Badge>
                   <span className="text-[10px] font-mono text-text-muted ml-auto">
-                    {primaryResponse.latency} latency
+                    Simulated response
                   </span>
                 </div>
 
@@ -509,7 +509,7 @@ export function WorkspacePreview() {
                       {comparisonModel.category}
                     </Badge>
                     <span className="text-[10px] font-mono text-text-muted">
-                      {comparisonResponse.latency} latency
+                      Simulated response
                     </span>
                   </div>
 

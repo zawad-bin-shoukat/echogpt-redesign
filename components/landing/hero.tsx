@@ -30,7 +30,7 @@ export function Hero() {
               Ecosystem
             </span>
             <span className="text-border-strong">|</span>
-            <span>40+ Verified Frontier Models in One Interface</span>
+            <span>41 Verified Models</span>
           </div>
 
           {/* Primary H1 Heading */}

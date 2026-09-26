@@ -75,7 +75,7 @@ export function BentoFeatures() {
                 <span>Active Routing Cluster</span>
                 <span className="flex items-center gap-1.5 text-accent font-semibold">
                   <span className="size-1.5 rounded-full bg-accent animate-pulse" />
-                  All 41 Gateways Online
+                  All 41 Models Available
                 </span>
               </div>
 
@@ -114,7 +114,7 @@ export function BentoFeatures() {
               </div>
 
               <div className="flex items-center justify-between text-xs pt-1">
-                <span className="text-text-muted">No API quotas, personal keys, or rate limits</span>
+                <span className="text-text-muted">Zero personal API keys required</span>
                 <Link
                   href="/app"
                   className="inline-flex items-center gap-1 text-accent font-medium hover:underline text-xs"
@@ -157,11 +157,11 @@ export function BentoFeatures() {
               <div className="space-y-1.5 text-xs text-text-secondary">
                 <div className="p-2 rounded bg-surface-elevated border border-border-subtle flex items-start justify-between gap-2">
                   <span className="truncate">Algorithmic correctness</span>
-                  <span className="font-mono text-[10px] text-accent font-semibold shrink-0">100% Match</span>
+                  <span className="font-mono text-[10px] text-accent font-semibold shrink-0">High Alignment</span>
                 </div>
                 <div className="p-2 rounded bg-surface-elevated border border-border-subtle flex items-start justify-between gap-2">
-                  <span className="truncate">Inference latency differential</span>
-                  <span className="font-mono text-[10px] text-text-muted shrink-0">Δ 0.04s</span>
+                  <span className="truncate">Inference latency comparison</span>
+                  <span className="font-mono text-[10px] text-text-muted shrink-0">Comparable</span>
                 </div>
               </div>
             </div>
@@ -195,7 +195,7 @@ export function BentoFeatures() {
                   <span className="size-2 rounded-full bg-accent" />
                   <span>DOM Context Injected</span>
                 </div>
-                <span className="font-mono text-[10px] text-text-muted">1,420 words</span>
+                <span className="font-mono text-[10px] text-text-muted">Active Page</span>
               </div>
               <div className="p-2 rounded bg-surface-elevated border border-border-subtle text-xs text-text-secondary">
                 &ldquo;Summarize the key architectural implications of this RFC...&rdquo;
@@ -258,7 +258,7 @@ export function BentoFeatures() {
                   </div>
                   <div>
                     <div className="text-xs font-semibold text-text-primary">Step 3: Executive Summary</div>
-                    <div className="text-[11px] font-mono text-text-muted">Gemini 3.8 Flash · 0.24s stream</div>
+                    <div className="text-[11px] font-mono text-text-muted">Gemini 3.8 Flash · Fast stream</div>
                   </div>
                 </div>
               </div>
